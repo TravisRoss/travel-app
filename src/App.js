@@ -23,8 +23,12 @@ export default function App() {
     <>
       <Logo />
       <Form onAddItems={handleAddItem} />
-      <PackingList items={items} onDeleteItem={handleDeleteItem} onToggleItem={handleToggleItem} />
-      <Stats />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+      />
+      <Stats items={items} />
     </>
   );
 }
@@ -82,7 +86,11 @@ function PackingList({ items, onDeleteItem, onToggleItem }) {
   return (
     <div className="list">
       {items.map((item) => (
-        <Item item={item} onDeleteItem={onDeleteItem} onToggleItem={onToggleItem} />
+        <Item
+          item={item}
+          onDeleteItem={onDeleteItem}
+          onToggleItem={onToggleItem}
+        />
       ))}
     </div>
   );
@@ -91,7 +99,11 @@ function PackingList({ items, onDeleteItem, onToggleItem }) {
 function Item({ item, onDeleteItem, onToggleItem }) {
   return (
     <li>
-      <input type="checkbox" value={item.packed} onChange={() => onToggleItem(item.id)} />
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => onToggleItem(item.id)}
+      />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
@@ -100,10 +112,27 @@ function Item({ item, onDeleteItem, onToggleItem }) {
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  if (items.length === 0) {
+    return (
+      <p className="stats">
+        <em>Get started by adding some items!</em>
+      </p>
+    );
+  }
+
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const packedPercentage = Math.round((numPacked / numItems) * 100);
+
   return (
     <footer className="stats">
-      You have X items on your list and you already packed X (X%) 🧳
+      <em>
+        {packedPercentage === 100
+          ? "You packed everything! You are good to go!"
+          : `You have ${numItems} items on your list and you already packed
+        ${numPacked} (${packedPercentage || 0}%) 🧳`}
+      </em>
     </footer>
   );
 }
